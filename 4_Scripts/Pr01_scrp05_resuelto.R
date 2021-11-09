@@ -41,11 +41,9 @@ wd<-getwd()
 
 # Instalación y activación de librerías
 # readr
-install.packages("readr")
 library(readr)
 
 # lubridate
-install.packages("lubridate")
 library(lubridate)
 
 ##################
@@ -122,8 +120,8 @@ library(lubridate)
 # Verificar el formato del archivo (puede tener alguna sorpresa)
 # El dataframe de salida debería llamarse "df_formato2"
 file<-"/2_Data/Data_Pr01_FORMAT2.csv"
-ruta<-paste(wd,file, sep="")							 			
-df_formato2 <- 
+ruta<-paste(wd,file, sep="")
+df_formato2 <- read.csv(ruta)
 
 # Importar el archivo Data_Pr01_FORMAT3.csv
 # Verificar el formato del archivo (puede tener alguna sorpresa)
@@ -131,11 +129,18 @@ df_formato2 <-
 # NOTA los decimales se establecen con: dec="XXX"
 file<-"/2_Data/Data_Pr01_FORMAT3.csv"
 ruta<-paste(wd,file, sep="")
-df_formato3 <- 
+df_formato3 <- read.csv(ruta, sep=" ",dec = ",")
+
 
 # 2.4 Inspección de dataframe
 # (df_formato3)
-
+View(df_formato3)
+summary(df_formato3)
+head(df_formato3)
+tail(df_formato3)
+dim(df_formato3)
+is.na(df_formato3)
+summary(is.na(df_formato3))
 
 ##################
 ### 3. Corrección de archivos
@@ -163,13 +168,16 @@ head(dataset$Power.kW.)
 # 3.3 Corrección de tipos de dato
 # dataset$Power.kW.
 # A realizar por los alumnos
-dataset$Power.kW.<-
+summary(as.numeric(dataset$Power.kW.))
+head(as.numeric(dataset$Power.kW.))
+
+dataset$Power.kW.<-as.numeric(dataset$Power.kW.)
 summary(dataset)
 
 # todas las variables numéricas [, 7:11]
 # A realizar por los alumnos
 names(dataset)
-for (i in       :     )
+for (i in 7:11)
 {
   dataset[,i]<-as.numeric(dataset[,i])
 }
@@ -223,7 +231,8 @@ wday(dataset$time[150]) # day of the week
 # Generar variable índice (fecha sin horas)
 # A realizar por los alumnos
 # aprovechar el ejemplo de dataset$time más arriba
-dataset$date<-
+dataset$date<-paste(dataset$Year, "-", dataset$Month, "-", dataset$Day_Month, sep="")
+dataset$date<-as.POSIXct(dataset$date, format="%Y-%m-%d")
 
 # Agregar datos por variable índice
 dataset.aggr<-aggregate(dataset, by=list(dataset$date), FUN=mean)
@@ -244,7 +253,8 @@ abline(h = 0, col="red")
 
 #Convertir en 0
 # A realizar por los alumnos
-dataset.aggr$HDD15<-
+max (dataset.aggr$difDD,0)
+dataset.aggr$HDD15<-pmax(dataset.aggr$difDD, 0)
 
 plot (dataset.aggr$date, dataset.aggr$difDD, type="l")
 abline(h = 0, col="red")
@@ -266,6 +276,7 @@ write.csv(dataset.aggr, file="dataset.aggr.csv")
 # 6.2 Inspección del archivo con editor de texto
 # A realizar por los alumnos
 # Dónde se ha guardado??
+getwd()
 
 # Formato, separadores y decimales
 # Formato, marcas de fila
@@ -273,7 +284,7 @@ write.csv(dataset.aggr, file="dataset.aggr.csv")
 # 6.3 Correcciones
 # A realizar por los alumnos. Consultar el archivo de ayuda de write.csv()
 # Quitar marca de fila
-write.csv(        )
+write.csv(dataset.aggr, file="dataset.aggr.csv", row.names=FALSE)
 
 ##################
 ### 7. Archivos RDS
@@ -288,3 +299,4 @@ write_rds(dataset.aggr, file="dataset.aggr.RDS")
 dataset.aggr_IMPORT <- readRDS("C:/GIT/PhD_Course/PhD_Course_Practice_01_R/dataset.aggr.RDS")
 
 # A responder por los alumnos. ¿Ventajas e inconvenientes RDS vs CSV?
+
